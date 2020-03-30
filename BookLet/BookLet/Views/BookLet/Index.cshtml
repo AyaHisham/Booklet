@@ -1,0 +1,112 @@
+﻿@model IEnumerable<BookLet.ViewModel.BookLetViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>BookLet</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Activity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                @if (item.Activity == 0)
+                {
+                    <td>
+                        Commerical
+                    </td>
+                }
+                @if (item.Activity == 1)
+                {
+                    <td>
+                        Agriculture
+                    </td>
+                }
+                @if (item.Activity == 2)
+                {
+                    <td>
+                        Other
+                    </td>
+                }
+                @if (item.Status == 0)
+                {
+                    <td>
+                        Avaliable
+                    </td>
+                }
+                @if (item.Status == 1)
+                {
+                    <td>
+                        Sold
+                    </td>
+                }
+
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                <input type="button" value="Delete" class="anchorAlert btn btn-danger" onclick="DeleteSlider(@item.Id)" />
+            </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<input type="hidden" id="hiddenId" />
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <p>Are You Sure You Want To Delete This  ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" onclick="ConfirmDelete()" class="anchor btn btn-danger" data-dismiss="modal">Delete</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function DeleteSlider(Id) {
+            $("#hiddenId").val(Id);
+            $("#myModal").modal('show');
+        }
+        function ConfirmDelete() {
+            var Id = $("#hiddenId").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/BookLet/Delete",
+                data: { id: Id },
+                success: function (result) {
+                    $("#myModal").modal("hide");
+                    window.location.href = "/BookLet/Index";
+                }
+            });
+        }
+    </script>
+}
